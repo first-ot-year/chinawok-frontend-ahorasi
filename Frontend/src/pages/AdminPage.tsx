@@ -387,7 +387,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
         </div>
 
         <div className="p-6 space-y-4">
-          {/* SUBIDA DE IMAGEN */}
+          {/* SUBIDA DE IMAGEN CALLATE LA BOCA HANKS CTMR*/} 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Imagen del producto *
