@@ -32,10 +32,10 @@ export function UserNavbar({ isStaff = false }: UserNavbarProps) {
 
   const getRoleBadge = () => {
     const roleColors = {
-      COCINERO: "bg-orange-100 text-orange-700",
-      DESPACHADOR: "bg-blue-100 text-blue-700",
-      REPARTIDOR: "bg-green-100 text-green-700",
-      USUARIO: "bg-gray-100 text-gray-700",
+      COCINERO: "bg-orange-100 text-orange-700 border-orange-300",
+      DESPACHADOR: "bg-blue-100 text-blue-700 border-blue-300",
+      REPARTIDOR: "bg-green-100 text-green-700 border-green-300",
+      USUARIO: "bg-purple-100 text-purple-700 border-purple-300",
     };
 
     const roleIcons = {
@@ -53,7 +53,7 @@ export function UserNavbar({ isStaff = false }: UserNavbarProps) {
 
     return (
       <span
-        className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded ${colorClass}`}
+        className={`text-[10px] font-bold uppercase px-2.5 py-1 rounded-full border ${colorClass}`}
       >
         {icon} {rol}
       </span>
@@ -62,81 +62,86 @@ export function UserNavbar({ isStaff = false }: UserNavbarProps) {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm">
-        <div className="w-full bg-white/95 backdrop-blur">
-          <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 py-3">
-            {/* Logo + menú */}
-            <div className="flex items-center gap-8">
-              <Link to="/" className="flex items-center gap-2">
-                <div className="h-8 w-24 rounded bg-gray-200 flex items-center justify-center text-xs font-semibold">
-                  China Wok
+      <nav className="fixed top-0 left-0 w-full z-50 shadow-lg">
+        {/* Barra principal con degradado rojo chino */}
+        <div className="w-full bg-gradient-to-r from-red-600 via-red-500 to-red-600">
+          <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 py-4">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-yellow-400 rounded-lg blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                <div className="relative bg-white rounded-lg px-6 py-2 shadow-md transform group-hover:scale-105 transition-transform">
+                  <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
+                    China Wok
+                  </span>
                 </div>
+              </div>
+            </Link>
+
+            {/* Menú principal */}
+            <div className="hidden md:flex items-center gap-6">
+              <Link
+                to="/productos"
+                className="flex items-center gap-2 text-white hover:text-yellow-300 transition-colors font-medium"
+              >
+                <span className="text-xl">🍜</span>
+                <span>Menú</span>
               </Link>
 
-              <div className="hidden md:flex items-center gap-6 text-sm text-gray-800">
-                <Link
-                  to="/productos"
-                  className="flex items-center gap-1 hover:text-red-600"
-                >
-                  <span>🍽️</span>
-                  <span>Menú</span>
-                </Link>
-
-                {isStaff && (
-                  <button
-                    className="flex items-center gap-1 hover:text-red-600"
-                    onClick={() => navigate("/mis-pedidos")}
-                  >
-                    <span>📋</span>
-                    <span>Mis Tareas</span>
-                  </button>
-                )}
-
+              {isStaff && (
                 <button
-                  className="flex items-center gap-1 hover:text-red-600"
-                  onClick={() => navigate("/promos")}
+                  className="flex items-center gap-2 text-white hover:text-yellow-300 transition-colors font-medium"
+                  onClick={() => navigate("/mis-pedidos")}
                 >
-                  <span>🧧</span>
-                  <span>Promos</span>
+                  <span className="text-xl">📋</span>
+                  <span>Mis Tareas</span>
                 </button>
+              )}
 
-                <button
-                  className="flex items-center gap-1 hover:text-red-600"
-                  onClick={() => navigate("/locales")}
-                >
-                  <span>📍</span>
-                  <span>Locales</span>
-                </button>
-              </div>
+              <button
+                className="flex items-center gap-2 text-white hover:text-yellow-300 transition-colors font-medium"
+                onClick={() => navigate("/promos")}
+              >
+                <span className="text-xl">🧧</span>
+                <span>Promos</span>
+              </button>
+
+              <button
+                className="flex items-center gap-2 text-white hover:text-yellow-300 transition-colors font-medium"
+                onClick={() => navigate("/locales")}
+              >
+                <span className="text-xl">📍</span>
+                <span>Locales</span>
+              </button>
             </div>
 
             {/* Lado derecho */}
-            <div className="flex items-center gap-6 text-xs md:text-sm">
-              <div className="hidden md:flex flex-col items-start leading-tight">
-                <div className="flex items-center gap-2 text-gray-500">
-                  <span>📞</span>
-                  <span>Llámanos</span>
+            <div className="flex items-center gap-4">
+              {/* Teléfono */}
+              <div className="hidden lg:flex items-center gap-3 bg-white/10 backdrop-blur rounded-full px-5 py-2.5 border border-white/20">
+                <span className="text-2xl">📞</span>
+                <div className="flex flex-col leading-tight">
+                  <span className="text-white/80 text-xs font-medium">Llámanos</span>
+                  <span className="text-yellow-300 font-bold text-lg tracking-wide">
+                    01-612-8000
+                  </span>
                 </div>
-                <span className="text-green-600 font-semibold">
-                  01 - 612 - 8000
-                </span>
               </div>
 
-              <div className="flex items-center gap-3">
+              {/* Usuario info */}
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur rounded-full px-4 py-2 border border-white/20">
                 <div className="flex flex-col items-start leading-tight">
-                  <div className="flex items-center gap-2 text-gray-500">
-                    <span className="text-xs">Hola,</span>
-                    <span className="text-green-600 font-semibold">
-                      {user?.nombre || user?.correo}
-                    </span>
-                  </div>
-                  {getRoleBadge()}
+                  <span className="text-white/80 text-xs">Hola,</span>
+                  <span className="text-yellow-300 font-bold text-sm">
+                    {user?.nombre || user?.correo}
+                  </span>
                 </div>
+                {getRoleBadge()}
                 <button
                   onClick={handleLogout}
-                  className="text-xs text-red-600 hover:text-red-800 font-medium"
+                  className="text-white hover:text-yellow-300 font-medium text-sm transition-colors"
                 >
-                  Cerrar sesión
+                  🚪
                 </button>
               </div>
 
@@ -144,12 +149,12 @@ export function UserNavbar({ isStaff = false }: UserNavbarProps) {
               {!isStaff && (
                 <button
                   onClick={() => setShowCart(true)}
-                  className="relative flex items-center gap-2 bg-green-600 text-white rounded-full px-4 py-2 text-xs md:text-sm font-semibold hover:bg-green-700 transition-colors"
+                  className="relative flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-red-700 rounded-full px-5 py-2.5 font-bold shadow-lg transform hover:scale-105 transition-all"
                 >
-                  <span>🛒</span>
+                  <span className="text-xl">🛒</span>
                   <span>S/ {getTotal().toFixed(2)}</span>
                   {getItemCount() > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold h-5 w-5 rounded-full flex items-center justify-center">
+                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold h-6 w-6 rounded-full flex items-center justify-center animate-bounce">
                       {getItemCount()}
                     </span>
                   )}
@@ -159,53 +164,8 @@ export function UserNavbar({ isStaff = false }: UserNavbarProps) {
           </div>
         </div>
 
-        {/* Fila inferior */}
-        <div className="w-full border-t border-gray-100 bg-white">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10 py-2 flex justify-end gap-6 text-[12px] text-gray-500">
-            {isStaff ? (
-              <>
-                <button
-                  className="flex items-center gap-1 hover:text-red-600"
-                  onClick={() => navigate("/staff/pedidos-activos")}
-                >
-                  <span>📋</span>
-                  <span>Pedidos Activos</span>
-                </button>
-                <button
-                  className="flex items-center gap-1 hover:text-red-600"
-                  onClick={() => navigate("/staff/pedidos-completados")}
-                >
-                  <span>✅</span>
-                  <span>Completados</span>
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  className="flex items-center gap-1 hover:text-red-600"
-                  onClick={() => navigate("/favoritos")}
-                >
-                  <span>♡</span>
-                  <span>Mis Favoritos</span>
-                </button>
-                <button
-                  className="flex items-center gap-1 hover:text-red-600"
-                  onClick={() => navigate("/seguir-pedido")}
-                >
-                  <span>🕒</span>
-                  <span>Sigue tu pedido</span>
-                </button>
-                <button
-                  className="flex items-center gap-1 hover:text-red-600"
-                  onClick={() => navigate("/mis-pedidos")}
-                >
-                  <span>📄</span>
-                  <span>Mis Pedidos</span>
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+        {/* Barra decorativa con patrón chino */}
+        <div className="w-full h-1 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400"></div>
       </nav>
 
       {/* MODAL CARRITO */}
@@ -244,18 +204,18 @@ function CartModal({
   if (items.length === 0) {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
-        <div className="bg-white rounded-lg max-w-md w-full p-6">
+        <div className="bg-white rounded-xl max-w-md w-full p-8 transform animate-[scale-in_0.3s_ease-out]">
           <div className="text-center">
-            <p className="text-6xl mb-4">🛒</p>
-            <h3 className="text-xl font-bold mb-2">Tu carrito está vacío</h3>
+            <p className="text-6xl mb-4 animate-bounce">🛒</p>
+            <h3 className="text-2xl font-bold mb-2 text-gray-800">Tu carrito está vacío</h3>
             <p className="text-gray-600 mb-6">
-              Agrega productos para continuar
+              ¡Agrega deliciosos platillos para continuar!
             </p>
             <button
               onClick={onClose}
-              className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700"
+              className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-600 transform hover:scale-105 transition-all shadow-lg"
             >
-              Seguir comprando
+              Explorar Menú 🍜
             </button>
           </div>
         </div>
@@ -264,24 +224,26 @@ function CartModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="border-b px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold">Tu Pedido</h2>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl transform animate-[scale-in_0.3s_ease-out]">
+        <div className="bg-gradient-to-r from-red-600 to-red-500 px-6 py-4 flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+            🛒 Tu Pedido
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl"
+            className="text-white hover:text-yellow-300 text-3xl transition-colors"
           >
             ×
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
           <div className="space-y-4">
             {items.map((item) => (
               <div
                 key={item.product.product_id}
-                className="flex gap-4 bg-gray-50 p-4 rounded-lg"
+                className="flex gap-4 bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100"
               >
                 <img
                   src={
@@ -289,16 +251,16 @@ function CartModal({
                     "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800"
                   }
                   alt={item.product.name}
-                  className="h-20 w-20 rounded-lg object-cover"
+                  className="h-24 w-24 rounded-lg object-cover shadow-md"
                 />
                 <div className="flex-1">
-                  <h3 className="font-semibold text-sm mb-1">
+                  <h3 className="font-bold text-base mb-1 text-gray-800">
                     {item.product.name}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-gray-600 mb-3">
                     S/ {item.product.price.toFixed(2)} c/u
                   </p>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={() =>
                         updateQuantity(
@@ -306,11 +268,11 @@ function CartModal({
                           item.quantity - 1
                         )
                       }
-                      className="h-8 w-8 rounded-full bg-white border border-gray-300 flex items-center justify-center font-bold hover:bg-gray-100"
+                      className="h-8 w-8 rounded-full bg-gray-100 border-2 border-red-500 text-red-500 flex items-center justify-center font-bold hover:bg-red-50 transition-colors"
                     >
                       −
                     </button>
-                    <span className="font-semibold w-8 text-center">
+                    <span className="font-bold text-lg w-8 text-center text-red-600">
                       {item.quantity}
                     </span>
                     <button
@@ -320,21 +282,21 @@ function CartModal({
                           item.quantity + 1
                         )
                       }
-                      className="h-8 w-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold hover:bg-green-700"
+                      className="h-8 w-8 rounded-full bg-red-600 text-white flex items-center justify-center font-bold hover:bg-red-700 transition-colors shadow-md"
                     >
                       +
                     </button>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold">
+                <div className="text-right flex flex-col justify-between">
+                  <p className="font-bold text-lg text-red-600">
                     S/ {(item.product.price * item.quantity).toFixed(2)}
                   </p>
                   <button
                     onClick={() => updateQuantity(item.product.product_id, 0)}
-                    className="text-red-600 text-sm hover:underline mt-2"
+                    className="text-red-600 text-sm hover:text-red-800 font-medium hover:underline"
                   >
-                    Eliminar
+                    🗑️ Eliminar
                   </button>
                 </div>
               </div>
@@ -342,10 +304,10 @@ function CartModal({
           </div>
         </div>
 
-        <div className="border-t px-6 py-4 bg-gray-50">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-lg font-semibold">Total:</span>
-            <span className="text-2xl font-bold text-green-600">
+        <div className="border-t-2 border-gray-200 px-6 py-5 bg-white">
+          <div className="flex justify-between items-center mb-5">
+            <span className="text-xl font-bold text-gray-700">Total:</span>
+            <span className="text-3xl font-bold text-red-600">
               S/ {getTotal().toFixed(2)}
             </span>
           </div>
@@ -357,15 +319,15 @@ function CartModal({
                   clearCart();
                 }
               }}
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-100"
+              className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg font-bold hover:bg-gray-100 transition-colors"
             >
-              Vaciar carrito
+              🗑️ Vaciar
             </button>
             <button
               onClick={onCheckout}
-              className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700"
+              className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg font-bold hover:from-red-700 hover:to-red-600 transform hover:scale-105 transition-all shadow-lg"
             >
-              Proceder al pago
+              💳 Proceder al Pago
             </button>
           </div>
         </div>

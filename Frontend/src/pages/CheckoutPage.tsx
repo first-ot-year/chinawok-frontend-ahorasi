@@ -48,14 +48,15 @@ const CheckoutPage: React.FC = () => {
       // Preparar items para el pedido
 const orderItems = items.map((item) => ({
   product_id: item.product.product_id,
+  name: item.product.name,
+  category: item.product.category,
+  imageUrl: item.product.imageUrl,
   quantity: item.quantity,
   price: item.product.price,
-  name: item.product.name,
-  imageUrl: item.product.imageUrl,
 }));
 
       // Crear pedido
-      const response = await createOrder({
+const response = await createOrder({
   customer_id: user.user_id,
   items: orderItems,
 });
