@@ -70,7 +70,7 @@ const HomeDashboard: React.FC = () => {
                   </div>
                 </div>
                 <p className="uppercase text-sm tracking-widest mb-2 font-bold">✨ VÁLIDO EN:</p>
-                <p className="text-base mb-6 font-semibold">🏪 SALÓN | 🌐 CHINAWOK.COM.PE | 📞 (01) 612-8000</p>
+                <p className="text-base mb-6 font-semibold">🏪 SALÓN | 🌐 CHINAWOK.COM.PE | 📞 (+51) 940-433-950</p>
                 <button className="mt-4 inline-flex items-center justify-center bg-yellow-400 text-red-700 px-8 py-4 rounded-full font-bold text-base hover:bg-yellow-300 shadow-xl transform hover:scale-110 hover:-rotate-2 transition-all">
                   🛒 Comprar Ahora
                 </button>
