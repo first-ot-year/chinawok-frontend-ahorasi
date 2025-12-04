@@ -164,6 +164,47 @@ export function UserNavbar({ isStaff = false }: UserNavbarProps) {
           </div>
         </div>
 
+        {/* 🔻 Sub-barra de navegación: seguir / historial de pedidos */}
+        <div className="w-full bg-red-700/95 border-t border-red-500/60">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 py-2 flex justify-end gap-6 text-[12px] text-yellow-100">
+            {isStaff ? (
+              <>
+                <button
+                  onClick={() => navigate("/mis-pedidos")}
+                  className="flex items-center gap-1 hover:text-white transition-colors"
+                >
+                  <span>📋</span>
+                  <span>Pedidos activos</span>
+                </button>
+                <button
+                  onClick={() => navigate("/mis-pedidos")}
+                  className="flex items-center gap-1 hover:text-white transition-colors"
+                >
+                  <span>✅</span>
+                  <span>Completados</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/seguir-pedido")}
+                  className="flex items-center gap-1 hover:text-white transition-colors"
+                >
+                  <span>🕒</span>
+                  <span>Sigue tu pedido</span>
+                </button>
+                <button
+                  onClick={() => navigate("/mis-pedidos")}
+                  className="flex items-center gap-1 hover:text-white transition-colors"
+                >
+                  <span>📄</span>
+                  <span>Historial de pedidos</span>
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Barra decorativa con patrón chino */}
         <div className="w-full h-1 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400"></div>
       </nav>
@@ -254,7 +295,8 @@ function CartModal({
                   className="h-24 w-24 rounded-lg object-cover shadow-md"
                 />
                 <div className="flex-1">
-                  <h3 className="font-bold text-base mb-1 text-gray-800">
+                  <h3 className="font-bold text
+-base mb-1 text-gray-800">
                     {item.product.name}
                   </h3>
                   <p className="text-sm text-gray-600 mb-3">

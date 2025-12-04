@@ -39,7 +39,7 @@ export function PublicNavbar() {
               <div className="flex flex-col leading-tight">
                 <span className="text-white/80 text-xs font-medium">Llámanos</span>
                 <span className="text-yellow-300 font-bold text-lg tracking-wide">
-                  01-612-8000
+                  940-433-950
                 </span>
               </div>
             </div>
