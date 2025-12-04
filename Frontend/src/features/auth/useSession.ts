@@ -35,7 +35,9 @@ interface SessionState {
   login: (body: LoginBody) => Promise<SessionUser>;
   register: (body: RegisterBody) => Promise<void>; // ⬅️ Cambiado: ya no devuelve SessionUser
   logout: () => void;
+  
   initSession: () => Promise<void>;
+  
 }
 
 const TOKEN_KEY = "auth_token";

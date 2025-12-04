@@ -5,10 +5,17 @@ export const API_ORDERS = "https://1qvyjv74r3.execute-api.us-east-1.amazonaws.co
 export const API_FULFILL = "https://gc8sncxhie.execute-api.us-east-1.amazonaws.com/dev";
 export const API_STATUS = "https://93icxxrllb.execute-api.us-east-1.amazonaws.com/dev";
 export const API_USERS = "https://9yr496f7r7.execute-api.us-east-1.amazonaws.com/dev";
+export const API_PRODUCTS = "https://h8ulb6856m.execute-api.us-east-1.amazonaws.com/dev";
 
 // Tenant por defecto
 const TENANT_ID = "CHINAWOK_LIMA_CENTRO";
 const TOKEN_KEY = "auth_token";
+
+const apiProducts = axios.create({
+  baseURL: API_PRODUCTS,
+  headers: { "x-tenant-id": TENANT_ID, "Content-Type": "application/json" },
+});
+
 
 // Axios instances
 const apiOrders = axios.create({
@@ -32,7 +39,7 @@ const apiUsers = axios.create({
 });
 
 // ✅ Interceptor para agregar token automáticamente
-[apiOrders, apiFulfill, apiStatus, apiUsers].forEach((instance) => {
+[apiOrders, apiFulfill, apiStatus, apiUsers, apiProducts].forEach((instance) => {
   instance.interceptors.request.use((config) => {
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
@@ -43,6 +50,21 @@ const apiUsers = axios.create({
 });
 
 // ------------------------ TIPOS ------------------------
+export type Product = {
+  tenant_id: string;
+  product_id: string;
+  name: string;
+  description: string;
+  price: number;
+  originalPrice?: number;
+  discount?: number;
+  category: string;
+  tag?: string;
+  imageUrl: string;
+  available: boolean;
+  created_at: string;
+  updated_at: string;
+};
 export type BackendUser = {
   tenant_id: string;
   user_id: string;
@@ -66,6 +88,65 @@ export type RegisterResponse = {
   tenant_id: string;
   user_id: string;
 };
+
+
+export async function getUploadUrl(fileName: string, contentType: string) {
+  const { data } = await apiProducts.post("/upload-url", {
+    fileName,
+    contentType,
+  });
+  return data;
+}
+
+// Función para subir imagen a S3
+export async function uploadImageToS3(file: File): Promise<string> {
+  try {
+    // 1. Obtener URL prefirmada
+    const { uploadUrl, publicUrl } = await getUploadUrl(file.name, file.type);
+    
+    // 2. Subir archivo directamente a S3
+    await fetch(uploadUrl, {
+      method: 'PUT',
+      body: file,
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
+    
+    // 3. Retornar URL pública
+    return publicUrl;
+  } catch (error) {
+    console.error("Error al subir imagen:", error);
+    throw new Error("No se pudo subir la imagen");
+  }
+}
+
+// Funciones - PRODUCTOS
+export async function getProducts(category?: string) {
+  const params = category ? { category } : {};
+  const { data } = await apiProducts.get("/products", { params });
+  return data;
+}
+
+export async function getProductById(product_id: string) {
+  const { data } = await apiProducts.get(`/products/${product_id}`);
+  return data;
+}
+
+export async function createProduct(product: Omit<Product, "tenant_id" | "product_id" | "created_at" | "updated_at">) {
+  const { data } = await apiProducts.post("/products", product);
+  return data;
+}
+
+export async function updateProduct(product_id: string, updates: Partial<Product>) {
+  const { data } = await apiProducts.put(`/products/${product_id}`, updates);
+  return data;
+}
+
+export async function deleteProduct(product_id: string) {
+  const { data } = await apiProducts.delete(`/products/${product_id}`);
+  return data;
+}
 
 // ------------------------ AUTENTICACION ------------------------
 

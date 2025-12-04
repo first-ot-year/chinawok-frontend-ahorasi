@@ -1,13 +1,26 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import LoginPage from "pages/LoginPage";
 import RegisterPage from "pages/RegisterPage";
+import HomePage from "pages/HomePage";
+import ProductsPage from "pages/ProductPage";
+import AdminProductsPage from "pages/AdminPage";
 
-import HomeDashboard from "pages/HomeDashboard";
 import { AppLayout } from "@app/ui/AppLayout";
 import { useSession } from "features/auth/useSession";
+
+// Componente para proteger rutas de admin
+function ProtectedAdminRoute({ children }: { children: React.ReactNode }) {
+  const { user } = useSession();
+  
+  // Si no hay usuario o no es ADMIN, redirigir al login
+  if (!user || user.rol !== "ADMIN") {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+}
 
 function App() {
   const { initSession, status } = useSession();
@@ -32,13 +45,26 @@ function App() {
     <BrowserRouter>
       <AppLayout>
         <Routes>
-          {/* Home */}
-          <Route path="/" element={<HomeDashboard />} />
-
+          {/* Rutas Públicas */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/productos" element={<ProductsPage />} />
+          
           {/* Auth */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
+          {/* Rutas de Administrador (Protegidas) */}
+          <Route 
+            path="/admin/productos" 
+            element={
+              <ProtectedAdminRoute>
+                <AdminProductsPage />
+              </ProtectedAdminRoute>
+            } 
+          />
+
+          {/* Ruta 404 - Opcional */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AppLayout>
     </BrowserRouter>
