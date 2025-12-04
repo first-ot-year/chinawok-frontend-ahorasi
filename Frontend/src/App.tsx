@@ -11,6 +11,7 @@ import MyOrdersPage from "./pages/MyOrdersPage";
 import OrderDetailPage from "pages/OrderDetailPage";
 import { AppLayout } from "@app/ui/AppLayout";
 import { useSession } from "features/auth/useSession";
+import AdminOrdersPage from "./pages/AdminOrdersPage";
 
 // Componente para proteger rutas de admin
 function ProtectedAdminRoute({ children }: { children: React.ReactNode }) {
@@ -70,6 +71,7 @@ function App() {
 
           {/* Ruta 404 - Opcional */}
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/admin/orders" element={<AdminOrdersPage />} />
         </Routes>
       </AppLayout>
     </BrowserRouter>
