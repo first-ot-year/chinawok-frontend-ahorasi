@@ -186,13 +186,7 @@ export function UserNavbar({ isStaff = false }: UserNavbarProps) {
               </>
             ) : (
               <>
-                <button
-                  onClick={() => navigate("/seguir-pedido")}
-                  className="flex items-center gap-1 hover:text-white transition-colors"
-                >
-                  <span>🕒</span>
-                  <span>Sigue tu pedido</span>
-                </button>
+
                 <button
                   onClick={() => navigate("/mis-pedidos")}
                   className="flex items-center gap-1 hover:text-white transition-colors"
