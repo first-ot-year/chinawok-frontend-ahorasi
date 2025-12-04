@@ -1,26 +1,31 @@
 // src/features/auth/useSession.ts
 import { create } from "zustand";
-import api from "@lib/axios";
+import * as api from "./api";
 
 export type SessionStatus = "unknown" | "authenticated" | "unauthenticated";
 
 export interface SessionUser {
-  id: string;
-  email: string;
-  username: string;
-  role: "tourist" | "guide" | string;
+  tenant_id: string;
+  user_id: string;
+  correo: string;
+  nombre: string;
+  apellidos: string;
+  dni: string;
+  rol: string;
 }
 
 interface LoginBody {
-  email: string;
+  correo: string;
   password: string;
 }
 
 interface RegisterBody {
-  email: string;
-  username: string;
+  nombres: string;
+  apellidos: string;
+  dni: string;
+  correo: string;
   password: string;
-  role?: string; // normalmente "tourist", luego lo cambias a "guide"
+  rol: "COCINERO" | "DESPACHADOR" | "REPARTIDOR" | "USUARIO" | "ADMIN";
 }
 
 interface SessionState {
@@ -28,84 +33,70 @@ interface SessionState {
   status: SessionStatus;
 
   login: (body: LoginBody) => Promise<SessionUser>;
-  register: (body: RegisterBody) => Promise<SessionUser>;
-  me: () => Promise<SessionUser | null>;
+  register: (body: RegisterBody) => Promise<void>; // ⬅️ Cambiado: ya no devuelve SessionUser
   logout: () => void;
+  initSession: () => Promise<void>;
 }
 
 const TOKEN_KEY = "auth_token";
 
-export const useSession = create<SessionState>((set, get) => ({
+export const useSession = create<SessionState>((set) => ({
   user: null,
   status: "unknown",
 
   // -------- LOGIN --------
   async login(body) {
-    const { data } = await api.post("/auth/login", body);
-    // backend (auth_handler.login_user) devuelve:
-    // { access: <token>, user: { id, email, username, role } }
+    const data = await api.login(body.correo, body.password);
 
-    const token = data.access as string;
-    const user = data.user as SessionUser;
+    const token = data.access_token;
+    const user: SessionUser = data.user;
 
-    // guardamos token en localStorage
     localStorage.setItem(TOKEN_KEY, token);
-
-    // actualizamos el store
     set({ user, status: "authenticated" });
 
     return user;
   },
 
-  // -------- REGISTER --------
+  // -------- REGISTER (sin auto-login) --------
   async register(body) {
-    const { data } = await api.post("/auth/register", body);
-    // backend (register_user) devuelve:
-    // { id, email, username, role, access }
-
-    const token = data.access as string;
-    const user: SessionUser = {
-      id: data.id,
-      email: data.email,
-      username: data.username,
-      role: data.role ?? "tourist",
-    };
-
-    localStorage.setItem(TOKEN_KEY, token);
-    set({ user, status: "authenticated" });
-
-    return user;
+    await api.register(body);
+    // ⬅️ ELIMINADO: el auto-login que causaba el error
+    // Usuario deberá hacer login manualmente
   },
 
-  // -------- ME (recuperar sesión desde token) --------
-  async me() {
+  // -------- INIT SESSION --------
+  async initSession() {
     const token = localStorage.getItem(TOKEN_KEY);
-
-    // si no hay token, marcamos como no autenticado
     if (!token) {
       set({ user: null, status: "unauthenticated" });
-      return null;
+      return;
     }
 
     try {
-      const { data } = await api.get("/auth/me");
-      // auth/me devuelve: { id, email, username, role, createdAt }
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      
+      const now = Math.floor(Date.now() / 1000);
+      if (payload.exp && payload.exp < now) {
+        localStorage.removeItem(TOKEN_KEY);
+        set({ user: null, status: "unauthenticated" });
+        return;
+      }
 
       const user: SessionUser = {
-        id: data.id,
-        email: data.email,
-        username: data.username,
-        role: data.role ?? "tourist",
+        tenant_id: payload.tenant_id,
+        user_id: payload.user_id,
+        correo: payload.correo,
+        nombre: "",
+        apellidos: "",
+        dni: "",
+        rol: payload.rol,
       };
 
       set({ user, status: "authenticated" });
-      return user;
     } catch (err) {
-      console.error("Error en /auth/me:", err);
-      // si el token no sirve, lo limpiamos
+      console.error("Error al inicializar sesión:", err);
       localStorage.removeItem(TOKEN_KEY);
       set({ user: null, status: "unauthenticated" });
-      return null;
     }
   },
 

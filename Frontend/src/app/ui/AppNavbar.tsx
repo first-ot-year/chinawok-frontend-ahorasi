@@ -1,9 +1,9 @@
 // app/ui/AppNavbar.tsx
 import { useEffect } from "react";
 import { useSession } from "features/auth/useSession";
-import { PublicNavbar } from "./PublicNavbar";
+import { GuideNavbar } from "./PublicNavbar";
 import { TouristNavbar } from "./TouristNavbar";
-import { GuideNavbar } from "./GuideNavbar";
+
 
 export function AppNavbar() {
   const { status, me, user } = useSession();
@@ -18,7 +18,7 @@ export function AppNavbar() {
   }, [status, me]);
 
   if (status !== "authenticated") {
-    return <PublicNavbar />;
+    return <GuideNavbar />;
   }
 
   // Si es guía
@@ -27,5 +27,5 @@ export function AppNavbar() {
   }
 
   // Por defecto, turista
-  return <TouristNavbar />;
+  return <GuideNavbar />;
 }

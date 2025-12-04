@@ -1,43 +1,44 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import HomePage from "pages/HomePage";
-import GuidesPage from "pages/GuidesPage";
-import ProfilePage from "pages/ProfilePage";
-import GuideProfilePage from "pages/GuideProfilePage";
-import NewReservationPage from "pages/NewReservationPage";
-import RegisterGuidePage from "pages/RegisterGuidePage";
+
 import LoginPage from "pages/LoginPage";
 import RegisterPage from "pages/RegisterPage";
-import MyReservationsPage from "pages/MyReservationsPage";
-import GuideDashboardPage from "pages/GuideDashboardPage";
 
+import HomeDashboard from "pages/HomeDashboard";
 import { AppLayout } from "@app/ui/AppLayout";
+import { useSession } from "features/auth/useSession";
 
 function App() {
+  const { initSession, status } = useSession();
+
+  useEffect(() => {
+    initSession(); // Recupera sesión al cargar la app
+  }, [initSession]);
+
+  // Opcional: Mostrar loading mientras se verifica la sesión
+  if (status === "unknown") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <AppLayout>
         <Routes>
           {/* Home */}
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomeDashboard />} />
 
           {/* Auth */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* Turista */}
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/guides" element={<GuidesPage />} />
-          <Route path="/guides/:id" element={<GuideProfilePage />} />
-          <Route
-            path="/reservations/new/:guideId"
-            element={<NewReservationPage />}
-          />
-          <Route path="/reservations/me" element={<MyReservationsPage />} />
-
-          {/* Guía */}
-          <Route path="/register-guide" element={<RegisterGuidePage />} />
-          <Route path="/guide/dashboard" element={<GuideDashboardPage />} />
         </Routes>
       </AppLayout>
     </BrowserRouter>

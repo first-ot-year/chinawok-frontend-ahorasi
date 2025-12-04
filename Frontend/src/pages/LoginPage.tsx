@@ -5,20 +5,24 @@ import { useSession } from "features/auth/useSession";
 export default function LoginPage() {
   const { login } = useSession();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ correo: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
+    
     try {
       await login(form);
-      navigate("/"); // Redirige al home después del login exitoso
-    } catch (err) {
+      navigate("/");
+    } catch (err: any) {
       console.error(err);
-      alert("Error al iniciar sesión");
+      const message = err.response?.data?.error || "Error al iniciar sesión";
+      setError(message);
     } finally {
-      setLoading(false); // Siempre se ejecuta después de la llamada
+      setLoading(false);
     }
   };
 
@@ -30,17 +34,21 @@ export default function LoginPage() {
       >
         <h1 className="text-2xl font-bold mb-2">Iniciar sesión</h1>
 
-        {/* Campo de correo */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            {error}
+          </div>
+        )}
+
         <input
           type="email"
           placeholder="Correo"
           className="w-full border rounded-md p-2"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          value={form.correo}
+          onChange={(e) => setForm({ ...form, correo: e.target.value })}
           required
         />
 
-        {/* Campo de contraseña */}
         <input
           type="password"
           placeholder="Contraseña"
@@ -50,11 +58,10 @@ export default function LoginPage() {
           required
         />
 
-        {/* Botón de submit */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-900 transition"
+          className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-900 transition disabled:opacity-50"
         >
           {loading ? "Ingresando..." : "Ingresar"}
         </button>
