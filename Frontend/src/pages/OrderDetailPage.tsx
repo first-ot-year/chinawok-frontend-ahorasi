@@ -2,7 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSession } from "../features/auth/useSession";
-import { getOrdersByCustomer, type Order } from "../features/auth/api";
+import {
+  getOrdersByCustomer,
+  type Order,
+  type OrderItem,
+} from "../features/auth/api";
 
 type LocationState = {
   order?: Order;
@@ -119,8 +123,12 @@ export const OrderDetailPage: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white rounded-lg shadow p-6 max-w-md w-full text-center space-y-4">
-          <h1 className="text-xl font-bold text-red-600">No se pudo cargar la orden</h1>
-          <p className="text-gray-600 text-sm">{error || "Intenta nuevamente más tarde."}</p>
+          <h1 className="text-xl font-bold text-red-600">
+            No se pudo cargar la orden
+          </h1>
+          <p className="text-gray-600 text-sm">
+            {error || "Intenta nuevamente más tarde."}
+          </p>
           <button
             onClick={() => navigate("/my-orders")}
             className="w-full bg-gray-800 text-white py-2 rounded-lg font-semibold hover:bg-black"
@@ -135,7 +143,6 @@ export const OrderDetailPage: React.FC = () => {
   const statusLabel = STATUS_LABELS[order.status] || order.status;
   const statusColor = getStatusColor(order.status);
 
-  // Determinar paso actual para la barra de progreso
   const currentStepIndex =
     STATUS_STEPS.findIndex((s) => s.code === order.status) === -1
       ? 0
@@ -168,9 +175,7 @@ export const OrderDetailPage: React.FC = () => {
           {/* Encabezado de la orden */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold mb-1">
-                Seguimiento de tu orden
-              </h1>
+              <h1 className="text-2xl font-bold mb-1">Detalle de tu pedido</h1>
               <p className="text-sm text-gray-500">
                 Código de seguimiento:{" "}
                 <span className="font-mono bg-gray-100 px-2 py-0.5 rounded">
@@ -178,7 +183,7 @@ export const OrderDetailPage: React.FC = () => {
                 </span>
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Realizada el {formattedDate}
+                Realizado el {formattedDate}
               </p>
             </div>
 
@@ -248,39 +253,32 @@ export const OrderDetailPage: React.FC = () => {
               </h2>
 
               <div className="space-y-3">
-                {order.items.map((item) => {
-                  // Cast suave para permitir name / imageUrl
-                  const anyItem = item as any;
-                  const name = anyItem.name || anyItem.product_name || item.product_id;
+                {order.items.map((item: OrderItem) => {
                   const imageUrl =
-                    anyItem.imageUrl ||
+                    item.imageUrl ||
                     "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800";
 
                   return (
                     <div
-                      key={item.product_id + String(anyItem.name || "")}
+                      key={item.product_id}
                       className="flex gap-4 bg-gray-50 rounded-xl p-3 md:p-4"
                     >
                       <img
                         src={imageUrl}
-                        alt={name}
+                        alt={item.name}
                         className="h-16 w-16 md:h-20 md:w-20 rounded-lg object-cover flex-shrink-0"
                       />
                       <div className="flex-1 flex flex-col justify-between">
                         <div>
                           <p className="text-sm font-semibold text-gray-800">
-                            {name}
+                            {item.name}
                           </p>
-                          {anyItem.category && (
-                            <p className="text-xs text-gray-500 mt-0.5">
-                              {anyItem.category}
-                            </p>
-                          )}
-                          {anyItem.description && (
-                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                              {anyItem.description}
-                            </p>
-                          )}
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {item.category}
+                          </p>
+                          <p className="text-[11px] text-gray-400 mt-1">
+                            ID interno: {item.product_id}
+                          </p>
                         </div>
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-xs text-gray-500">
@@ -290,7 +288,10 @@ export const OrderDetailPage: React.FC = () => {
                             </span>
                           </span>
                           <span className="text-sm font-semibold text-gray-800">
-                            S/ {(Number(item.price) * Number(item.quantity)).toFixed(2)}
+                            S/{" "}
+                            {(
+                              Number(item.price) * Number(item.quantity)
+                            ).toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -313,7 +314,6 @@ export const OrderDetailPage: React.FC = () => {
                       S/ {order.total.toFixed(2)}
                     </span>
                   </div>
-                  {/* Si luego tienes deliveryFee / descuentos, agrégalo aquí */}
                   <div className="border-t pt-2 mt-2 flex justify-between font-semibold">
                     <span>Total pagado</span>
                     <span className="text-green-600">
@@ -328,14 +328,13 @@ export const OrderDetailPage: React.FC = () => {
                   Información importante
                 </p>
                 <ul className="list-disc pl-4 space-y-1">
-                  <li>Guarda este código de seguimiento para cualquier consulta.</li>
+                  <li>Revisa el detalle de cada plato en esta pantalla.</li>
                   <li>
-                    Podrás ver el cambio de estado de tu órden en esta misma
-                    pantalla.
+                    El tipo de comida se muestra debajo del nombre (por ejemplo:
+                    “Chaufas”, “Entradas”, “Combos”).
                   </li>
                   <li>
-                    Si tu órden aparece como <span className="font-semibold">ENTREGADO</span> y no
-                    la recibiste, comunícate con el local.
+                    Si algo no coincide con tu pedido, comunícate con el local.
                   </li>
                 </ul>
               </div>

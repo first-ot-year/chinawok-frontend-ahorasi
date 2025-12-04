@@ -76,6 +76,7 @@ export type BackendUser = {
 };
 
 export interface OrderItem {
+  category: string;
   product_id: string;
   quantity: number;
   price: number;
