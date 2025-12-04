@@ -18,8 +18,22 @@ export default function MenuProductos() {
     try {
       setLoading(true);
       const response = await getProducts();
-      // El API devuelve { success: true, data: [...], count: N }
-      const productsArray = response?.data || [];
+      
+      // 🔥 CORRECCIÓN: Validar múltiples formatos de respuesta
+      let productsArray: Product[] = [];
+      
+      if (Array.isArray(response)) {
+        // Si la respuesta es directamente un array
+        productsArray = response;
+      } else if (response?.data && Array.isArray(response.data)) {
+        // Si viene en response.data
+        productsArray = response.data;
+      } else if (response?.products && Array.isArray(response.products)) {
+        // Si viene en response.products
+        productsArray = response.products;
+      }
+      
+      console.log('Productos cargados:', productsArray); // Para debug
       setProducts(productsArray);
     } catch (error) {
       console.error('Error cargando productos:', error);
@@ -29,16 +43,20 @@ export default function MenuProductos() {
     }
   };
 
-  // Obtener categorías únicas
-  const categories = ['all', ...new Set(products.map(p => p.category))];
+  // 🔥 CORRECCIÓN: Validar que products sea array antes de usar .map()
+  const categories = ['all', ...new Set(
+    Array.isArray(products) ? products.map(p => p.category) : []
+  )];
 
-  // Filtrar productos
-  const filteredProducts = products.filter(product => {
-    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch && product.available;
-  });
+  // 🔥 CORRECCIÓN: Validar que products sea array antes de filtrar
+  const filteredProducts = Array.isArray(products) 
+    ? products.filter(product => {
+        const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+        const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             product.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch && product.available;
+      })
+    : [];
 
   // Emojis por categoría
   const categoryEmojis: Record<string, string> = {
