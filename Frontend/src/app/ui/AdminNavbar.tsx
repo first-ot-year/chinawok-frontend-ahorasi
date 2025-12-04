@@ -37,6 +37,7 @@ export function AdminNavbar() {
               <span className="text-xl">🍽️</span>
               <span>Menú</span>
             </Link>
+
             <Link
               to="/admin/productos"
               className="flex items-center gap-2 text-white hover:text-yellow-300 transition-colors font-semibold"
@@ -44,12 +45,15 @@ export function AdminNavbar() {
               <span className="text-xl">⚙️</span>
               <span>Administrar Productos</span>
             </Link>
-            <button
+
+            {/* ✅ Dashboard ahora navega a la página de admin que creamos */}
+            <Link
+              to="/admin/orders"
               className="flex items-center gap-2 text-white hover:text-yellow-300 transition-colors font-medium"
             >
               <span className="text-xl">📊</span>
               <span>Dashboard</span>
-            </button>
+            </Link>
           </div>
 
           {/* Lado derecho */}
