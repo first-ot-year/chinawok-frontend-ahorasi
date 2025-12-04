@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getProducts, type Product as ApiProduct } from "../features/auth/api";
+import { useCart } from "../features/auth/useCart";
+import { useSession } from "../features/auth/useSession";
 
 const HomeDashboard: React.FC = () => {
   const [recommended, setRecommended] = useState<ApiProduct[]>([]);
   const [bestSellers, setBestSellers] = useState<ApiProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const { user } = useSession();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadProducts();
@@ -14,22 +20,14 @@ const HomeDashboard: React.FC = () => {
     try {
       setLoading(true);
       const data = await getProducts();
-      
-      // La API puede devolver { products: [...] } o directamente [...]
       const allProducts = Array.isArray(data) ? data : (data.products || data.data || []);
-      
-      console.log("Productos recibidos:", allProducts);
-      
-      // Filtrar productos disponibles
       const available = allProducts.filter((p: ApiProduct) => p.available);
       
-      // Dividir en recomendados y más vendidos (simulado)
       const half = Math.ceil(available.length / 2);
       setRecommended(available.slice(0, half));
       setBestSellers(available.slice(half));
     } catch (error) {
       console.error("Error al cargar productos:", error);
-      // Establecer arrays vacíos en caso de error
       setRecommended([]);
       setBestSellers([]);
     } finally {
@@ -41,7 +39,7 @@ const HomeDashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* BARRA DIRECCIÓN */}
       <div className="w-full bg-white">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-center">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
           <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow">
             <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white text-green-600 text-xs">
               📍
@@ -62,25 +60,19 @@ const HomeDashboard: React.FC = () => {
         <section className="bg-white">
           <div className="max-w-6xl mx-auto px-4 md:px-0 py-8">
             <div className="bg-red-600 rounded-3xl overflow-hidden grid md:grid-cols-2 min-h-[320px]">
-              {/* Lado texto */}
               <div className="flex flex-col justify-center px-8 py-10 text-white">
                 <div className="border-4 border-white px-6 py-4 inline-block mb-6">
                   <div className="text-3xl md:text-4xl font-extrabold tracking-wide">
                     CHINA WEEK
                   </div>
                 </div>
-                <p className="uppercase text-xs tracking-widest mb-2">
-                  VÁLIDO EN:
-                </p>
-                <p className="text-sm mb-4">
-                  SALÓN | CHINAWOK.COM.PE | (01) 612-8000
-                </p>
+                <p className="uppercase text-xs tracking-widest mb-2">VÁLIDO EN:</p>
+                <p className="text-sm mb-4">SALÓN | CHINAWOK.COM.PE | (01) 612-8000</p>
                 <button className="mt-4 inline-flex items-center justify-center bg-black px-6 py-3 rounded-full font-semibold text-sm hover:bg-gray-900">
                   Comprar
                 </button>
               </div>
 
-              {/* Lado imágenes */}
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-l from-red-600/40 to-transparent z-0" />
                 <div className="relative z-10 h-full grid grid-cols-2 gap-2 p-4">
@@ -125,13 +117,11 @@ const HomeDashboard: React.FC = () => {
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600"></div>
               </div>
             ) : recommended.length > 0 ? (
-              <div className="relative">
-                <div className="overflow-x-auto pb-4">
-                  <div className="flex gap-4 min-w-max">
-                    {recommended.map((p) => (
-                      <ProductCard key={p.product_id} product={p} />
-                    ))}
-                  </div>
+              <div className="overflow-x-auto pb-4">
+                <div className="flex gap-4 min-w-max">
+                  {recommended.map((p) => (
+                    <ProductCard key={p.product_id} product={p} />
+                  ))}
                 </div>
               </div>
             ) : (
@@ -142,7 +132,7 @@ const HomeDashboard: React.FC = () => {
           </div>
         </section>
 
-        {/* OTRAS PROMOS / MÁS VENDIDOS */}
+        {/* LOS MÁS VENDIDOS */}
         <section className="bg-white py-10">
           <div className="max-w-6xl mx-auto px-4 md:px-0">
             <h2 className="text-xl md:text-2xl font-extrabold tracking-wide mb-6">
@@ -235,15 +225,28 @@ const HomeDashboard: React.FC = () => {
   );
 };
 
+// ========== PRODUCT CARD ==========
 type ProductCardProps = {
   product: ApiProduct;
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const [quantity, setQuantity] = useState(0);
+  const { items, addItem, updateQuantity } = useCart();
+  
+  const cartItem = items.find(item => item.product.product_id === product.product_id);
+  const quantity = cartItem?.quantity || 0;
 
-  const handleAdd = () => setQuantity((prev) => prev + 1);
-  const handleRemove = () => setQuantity((prev) => Math.max(0, prev - 1));
+  const handleAdd = () => {
+    if (quantity === 0) {
+      addItem(product);
+    } else {
+      updateQuantity(product.product_id, quantity + 1);
+    }
+  };
+
+  const handleRemove = () => {
+    updateQuantity(product.product_id, quantity - 1);
+  };
 
   return (
     <article className="bg-white rounded-3xl shadow-sm border border-gray-100 w-64 flex-shrink-0 overflow-hidden flex flex-col">

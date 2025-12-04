@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
+import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "pages/LoginPage";
 import RegisterPage from "pages/RegisterPage";
 import HomePage from "pages/HomePage";
 import ProductsPage from "pages/ProductPage";
 import AdminProductsPage from "pages/AdminPage";
-
+import TrackOrderPage from "./pages/TrackOrderPage";
+import MyOrdersPage from "./pages/MyOrdersPage";
+import OrderDetailPage from "pages/OrderDetailPage";
 import { AppLayout } from "@app/ui/AppLayout";
 import { useSession } from "features/auth/useSession";
 
@@ -48,7 +50,10 @@ function App() {
           {/* Rutas Públicas */}
           <Route path="/" element={<HomePage />} />
           <Route path="/productos" element={<ProductsPage />} />
-          
+          <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/orden/:orderId" element={<OrderDetailPage />} />
+          <Route path="/seguir-pedido" element={<TrackOrderPage />} />
+<Route path="/mis-pedidos" element={<MyOrdersPage />} />
           {/* Auth */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

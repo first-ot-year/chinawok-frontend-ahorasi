@@ -75,6 +75,21 @@ export type BackendUser = {
   rol: string;
 };
 
+export interface OrderItem {
+  product_id: string;
+  quantity: number;
+  price: number;
+  name: string;
+  imageUrl?: string;
+}
+
+export interface CreateOrderResponse {
+  order_id: string;
+  success: boolean;
+  message: string;
+  data: Order;
+}
+
 export type LoginResponse = {
   message: string;
   access_token: string;
@@ -88,6 +103,17 @@ export type RegisterResponse = {
   tenant_id: string;
   user_id: string;
 };
+
+export interface Order {
+  tenant_id: string;
+  order_id: string;
+  customer_id: string;
+  status: string;
+  total: number;
+  items: OrderItem[];
+  created_at: string;
+  updated_at: string;
+}
 
 
 export async function getUploadUrl(fileName: string, contentType: string) {
@@ -188,11 +214,10 @@ export async function register(payload: {
 export async function createOrder(order: {
   customer_id: string;
   items: { product_id: string; quantity: number; price: number }[];
-}) {
+}): Promise<CreateOrderResponse> {
   const { data } = await apiOrders.post("/orders", order);
   return data;
 }
-
 /**
  * GET /orders/customer/{customer_id}
  * Headers: x-tenant-id
