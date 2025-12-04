@@ -8,6 +8,8 @@ import {
   type Product,
 } from "../features/auth/api";
 
+// PICHULA
+
 const AdminProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
