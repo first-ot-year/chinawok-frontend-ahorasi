@@ -12,7 +12,7 @@ import OrderDetailPage from "pages/OrderDetailPage";
 import { AppLayout } from "@app/ui/AppLayout";
 import { useSession } from "features/auth/useSession";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
-
+import MenuProductos from "pages/MenuProductos";
 // Componente para proteger rutas de admin
 function ProtectedAdminRoute({ children }: { children: React.ReactNode }) {
   const { user } = useSession();
@@ -50,7 +50,7 @@ function App() {
         <Routes>
           {/* Rutas Públicas */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/productos" element={<ProductsPage />} />
+          
           <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/orden/:orderId" element={<OrderDetailPage />} />
           <Route path="/seguir-pedido" element={<TrackOrderPage />} />
@@ -58,7 +58,7 @@ function App() {
           {/* Auth */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
+        <Route path="/productos" element={<MenuProductos />} />
           {/* Rutas de Administrador (Protegidas) */}
           <Route 
             path="/admin/productos" 

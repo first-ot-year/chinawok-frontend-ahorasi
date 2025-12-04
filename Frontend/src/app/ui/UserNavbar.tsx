@@ -98,21 +98,7 @@ export function UserNavbar({ isStaff = false }: UserNavbarProps) {
                 </button>
               )}
 
-              <button
-                className="flex items-center gap-2 text-white hover:text-yellow-300 transition-colors font-medium"
-                onClick={() => navigate("/promos")}
-              >
-                <span className="text-xl">🧧</span>
-                <span>Promos</span>
-              </button>
-
-              <button
-                className="flex items-center gap-2 text-white hover:text-yellow-300 transition-colors font-medium"
-                onClick={() => navigate("/locales")}
-              >
-                <span className="text-xl">📍</span>
-                <span>Locales</span>
-              </button>
+              
             </div>
 
             {/* Lado derecho */}

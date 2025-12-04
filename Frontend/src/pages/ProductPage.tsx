@@ -20,6 +20,7 @@ const ProductsPage: React.FC = () => {
       setError(null);
       const category = selectedCategory === "all" ? undefined : selectedCategory;
       const data = await getProducts(category);
+      
       setProducts(data);
     } catch (err) {
       setError("Error al cargar los productos. Por favor, intenta nuevamente.");

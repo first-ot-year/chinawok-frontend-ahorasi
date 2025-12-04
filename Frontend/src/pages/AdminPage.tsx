@@ -22,9 +22,10 @@ const AdminProductsPage: React.FC = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const data = await getProducts();
-      const productsList = Array.isArray(data) ? data : (data.products || []);
-      setProducts(productsList);
+      const response = await getProducts();
+      // ✅ El API devuelve { success: true, data: [...], count: N }
+      const productsArray = response?.data || [];
+      setProducts(productsArray);
     } catch (error) {
       console.error("Error al cargar productos:", error);
       alert("Error al cargar productos");
@@ -175,7 +176,7 @@ const AdminProductsPage: React.FC = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <img
-                            src={product.imageUrl}
+                            src={product.imageUrl || "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800"}
                             alt={product.name}
                             className="h-12 w-12 rounded-lg object-cover"
                           />
